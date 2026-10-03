@@ -1,0 +1,38 @@
+// Prisma schema for LeadPulse AI - Lead Intent Generation & Social Listening App
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+model Lead {
+  id             String     @id @default(uuid())
+  source         String     // 'Reddit', 'F5Bot', 'ChromeExtension', 'RSS', 'LinkedIn', 'Twitter'
+  externalId     String?    @unique
+  title          String?
+  content        String     @db.Text
+  author         String?
+  url            String     @unique
+  intentScore    Int        @default(0)
+  status         String     @default("NEW") // Allowed values: 'NEW' | 'CONTACTED' | 'REPLIED' | 'ARCHIVED' | 'DELETED'
+  suggestedReply String?    @db.Text
+  reasoning      String?    @db.Text
+  createdAt      DateTime   @default(now())
+
+  @@index([intentScore(sort: Desc)])
+  @@index([status])
+  @@index([source])
+}
+
+model MonitoredKeyword {
+  id        String   @id @default(uuid())
+  keyword   String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

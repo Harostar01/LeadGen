@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeadPulse AI</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      width: 380px;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      font-size: 13px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-badge {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--accent-glow);
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.3px;
+    }
+    .brand-subtitle {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .status-pill {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 7px 10px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 64px;
+      line-height: 1.4;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 9px 14px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #4338ca, #6d28d9);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.6);
+      transform: translateY(-1px);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-secondary {
+      background: #1f2937;
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid #374151;
+      margin-top: 6px;
+    }
+    .btn-secondary:hover {
+      background: #374151;
+      box-shadow: none;
+    }
+    .result-card {
+      display: none;
+      margin-top: 14px;
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .score-high {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .score-med {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .score-low {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .reasoning-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 10px;
+      border-left: 2px solid var(--accent);
+      padding-left: 8px;
+    }
+    .suggested-reply-box {
+      background: #0d131f;
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #e5e7eb;
+      margin-bottom: 8px;
+      white-space: pre-wrap;
+      max-height: 110px;
+      overflow-y: auto;
+    }
+    .notification {
+      display: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .notification.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .notification.success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .config-toggle {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: right;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: underline;
+    }
+    .config-box {
+      display: none;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--card-border);
+    }
+    .links-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--card-border);
+      font-size: 11px;
+    }
+    .links-footer a {
+      color: #818cf8;
+      text-decoration: none;
+    }
+    .links-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="logo-badge">⚡</div>
+      <div>
+        <div class="brand-title">LeadPulse AI</div>
+        <div class="brand-subtitle">Social Listening & Intent Capture</div>
+      </div>
+    </div>
+    <div class="status-pill" id="statusPill">
+      <span class="status-dot"></span>
+      <span>Live</span>
+    </div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+
+  <form id="captureForm">
+    <div class="row">
+      <div class="form-group">
+        <label for="sourceSelect">Source</label>
+        <select id="sourceSelect">
+          <option value="Reddit">Reddit</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Twitter">Twitter / X</option>
+          <option value="Upwork">Upwork</option>
+          <option value="Instagram">Instagram</option>
+          <option value="ChromeExtension" selected>Chrome Extension</option>
+          <option value="F5Bot">F5Bot</option>
+          <option value="RSS">RSS</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="authorInput">Author</label>
+        <input type="text" id="authorInput" placeholder="e.g. u/technocrat" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="titleInput">Post / Thread Title</label>
+      <input type="text" id="titleInput" required placeholder="Looking for agency / developer..." />
+    </div>
+
+    <div class="form-group">
+      <label for="urlInput">Post URL</label>
+      <input type="url" id="urlInput" required placeholder="https://..." />
+    </div>
+
+    <div class="form-group">
+      <label for="contentInput">Post Content / Selection</label>
+      <textarea id="contentInput" required placeholder="Highlight text on page or paste post content here..."></textarea>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn">
+      <span>⚡ Capture & Score with AI</span>
+    </button>
+  </form>
+
+  <div id="resultCard" class="result-card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span id="scoreBadge" class="score-badge">Intent: 85/100</span>
+      <span id="leadStatusBadge" style="font-size: 10px; color: #9ca3af;">Status: NEW</span>
+    </div>
+    <div id="reasoningText" class="reasoning-text"></div>
+    <label style="font-size: 10px;">Suggested AI Pitch:</label>
+    <div id="replyBox" class="suggested-reply-box"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+      <button type="button" id="copyReplyBtn" class="btn btn-secondary">📋 Copy Pitch</button>
+      <button type="button" id="openThreadBtn" class="btn btn-secondary">🚀 Open Thread</button>
+    </div>
+  </div>
+
+  <div class="config-toggle" id="configToggle">⚙️ API Settings</div>
+  <div class="config-box" id="configBox">
+    <div class="form-group">
+      <label for="apiUrlInput">API Base URL</label>
+      <input type="text" id="apiUrlInput" value="http://localhost:3000" />
+    </div>
+  </div>
+
+  <div class="links-footer">
+    <a href="http://localhost:3000/dashboard" target="_blank" id="openDashboardLink">📊 Open Dashboard</a>
+    <span style="color: var(--text-muted);">v1.0.0</span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
